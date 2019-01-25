@@ -41,7 +41,7 @@ func Run() {
 
 		case <-t1.C:
 			t1.Reset(time.Second * SETTLE_TIME_SECOND)
-			BusiSettle.Run()
+			//BusiSettle.Run()
 
 		case <-t3.C:
 			timer := GetTimer(timestamp)

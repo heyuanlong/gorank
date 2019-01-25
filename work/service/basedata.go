@@ -2,5 +2,7 @@ package service
 
 type basedataInterface interface {
 	GetKey() int
-	compare(basedataInterface) bool
+	Compare(basedataInterface) bool
+	Print()
+	GetValue() int
 }

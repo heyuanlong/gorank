@@ -13,7 +13,7 @@ import (
 
 func main() {
 	types := flag.String("T", "", "启动类型，空：正常，race：刷比赛，bonus：刷分红，price：刷兑换比例")
-	//begins := flag.Int64("B", 0, "开始时间戳，左闭右闭")
+	begins := flag.Int64("B", 0, "开始时间戳，左闭右闭")
 	//ends := flag.Int64("E", 0, "结束时间戳，左闭右闭")
 	flag.Parse()
 
@@ -29,7 +29,7 @@ func main() {
 		r.Run()
 	}
 	if *types == "settle" {
-		kservice.Run()
+		kservice.BusiSettle.Run(int(*begins))
 	}
 
 }

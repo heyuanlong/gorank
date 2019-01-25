@@ -1,5 +1,9 @@
 package service
 
+import (
+	"math/rand"
+)
+
 type SettleStruct struct {
 	tm int64
 }
@@ -11,10 +15,12 @@ func NewSettleStruct() *SettleStruct {
 func (ts *SettleStruct) Init() {
 
 }
-func (ts *SettleStruct) Run() {
-	Glock.Lock()
-	defer func() {
-		Glock.Unlock()
-	}()
+func (ts *SettleStruct) Run(nums int) {
+	rank := NewRankStruct()
+	for index := 0; index < nums; index++ {
+		d := NewDataStruct(index, rand.Intn(999))
+		rank.Add(d)
 
+	}
+	rank.LookAll()
 }

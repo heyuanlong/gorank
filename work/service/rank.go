@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"sync"
 )
 
@@ -34,9 +35,26 @@ func (ts *RankStruct) Add(bdata basedataInterface) error {
 func (ts *RankStruct) add(bdata basedataInterface) error {
 	ts.datam[bdata.GetKey()] = bdata
 
+	preBucket := ts.bucket
 	bucket := ts.bucket
 	for {
-		bucket
+
+		pos := bucket.CanAdd(bdata)
+		if pos == PRE_POS {
+			preBucket.Add(bdata)
+			break
+		}
+		if pos == MID_POS {
+			bucket.Add(bdata)
+			break
+		}
+		preBucket = bucket
+		bucket = bucket.next
+
+		if bucket == nil {
+			preBucket.Add(bdata)
+			break
+		}
 	}
 
 	return nil
@@ -55,4 +73,18 @@ func (ts *RankStruct) GetRank(basedataInterface) (int, error) {
 func (ts *RankStruct) GetPage(page int, paseSize int) []basedataInterface {
 
 	return []basedataInterface{}
+}
+
+func (ts *RankStruct) LookAll() {
+
+	bucket := ts.bucket
+	for {
+		fmt.Println("-----------------------------")
+		bucket.Print()
+		bucket = bucket.next
+
+		if bucket == nil {
+			break
+		}
+	}
 }
