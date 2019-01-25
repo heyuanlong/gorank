@@ -1,7 +1,7 @@
 package service
 
 import (
-	kinits "gorank/initialize"
+	"fmt"
 	"sort"
 )
 
@@ -37,30 +37,35 @@ type BucketStruct struct {
 
 func NewBucketStruct() *BucketStruct {
 	return &BucketStruct{
-		maxs:  20,
-		caps:  30,
+		maxs:  200,
+		caps:  300,
 		datas: make(datasStruct, 500),
 	}
 }
 
 func (ts *BucketStruct) CanAdd(bdata basedataInterface) int { //-1:前面 0:中间 1:后面
+
 	if ts.nums == 0 {
+		fmt.Print(MID_POS, " ")
 		return MID_POS
 	}
-
+	fmt.Print(ts.headData.GetValue(), " ", ts.tailData.GetValue(), " ")
 	if bdata.Compare(ts.headData) == false {
+		fmt.Print(PRE_POS, " ")
 		return PRE_POS
 	}
-	if bdata.Compare(ts.tailData) == true {
+	if bdata.Compare(ts.tailData) == false {
+		fmt.Print(MID_POS, " ")
 		return MID_POS
 	}
+	fmt.Print(NEXT_POS, " ")
 	return NEXT_POS
 }
 
 func (ts *BucketStruct) Add(bdata basedataInterface) {
 
 	pos := sort.Search(ts.nums, func(i int) bool { return ts.datas[i].Compare(bdata) })
-	kinits.LogInfo.Println("pos:", pos, "value:", bdata.GetValue())
+	fmt.Println("pos:", pos, "value:", bdata.GetValue())
 	for index := ts.nums; index >= pos; index-- {
 		ts.datas[index+1] = ts.datas[index]
 	}
@@ -77,6 +82,7 @@ func (ts *BucketStruct) check() {
 	if ts.nums < ts.caps {
 		return
 	}
+	fmt.Println("go li---")
 
 	pnums := 0
 	if ts.prev != nil {
@@ -113,7 +119,9 @@ func (ts *BucketStruct) addTails(bdatas []basedataInterface) {
 	ts.tailData = ts.datas[ts.nums-1]
 }
 func (ts *BucketStruct) addHeads(bdatas []basedataInterface) {
-	ts.datas = append(bdatas, ts.datas...) //有待优化
+	tmp := make([]basedataInterface, len(bdatas)) //有待优化
+	copy(tmp, bdatas)
+	ts.datas = append(tmp, ts.datas...)
 
 	ts.nums += len(bdatas)
 	ts.headData = ts.datas[0]

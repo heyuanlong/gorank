@@ -79,8 +79,9 @@ func (ts *RankStruct) LookAll() {
 
 	bucket := ts.bucket
 	for {
-		fmt.Println("-----------------------------")
+
 		bucket.Print()
+		fmt.Print(" -> ")
 		bucket = bucket.next
 
 		if bucket == nil {

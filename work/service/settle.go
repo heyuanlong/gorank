@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"math/rand"
 )
 
@@ -23,4 +24,7 @@ func (ts *SettleStruct) Run(nums int) {
 
 	}
 	rank.LookAll()
+	fmt.Println()
+	fmt.Println()
+	fmt.Println()
 }

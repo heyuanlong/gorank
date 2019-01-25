@@ -24,5 +24,5 @@ func (ts *dataStruct) GetValue() int {
 	return ts.value
 }
 func (ts *dataStruct) Print() {
-	fmt.Println(ts.value)
+	fmt.Print(ts.value, ",")
 }
