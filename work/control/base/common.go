@@ -18,8 +18,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/parnurzeal/gorequest"
 
-	kinit "goapi2/initialize"
-	kcode "goapi2/work/code"
+	kinit "gorank/initialize"
+	kcode "gorank/work/code"
 )
 
 type DataIStruct struct {

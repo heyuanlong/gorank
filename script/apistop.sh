@@ -1,2 +1,2 @@
-supervisorctl stop goapi2_api
+supervisorctl stop gorank_api
 echo "stop ok"

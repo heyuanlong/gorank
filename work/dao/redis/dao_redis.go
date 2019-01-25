@@ -2,7 +2,7 @@ package redis
 
 import (
 	"errors"
-	kinit "goapi2/initialize"
+	kinit "gorank/initialize"
 
 	"github.com/garyburd/redigo/redis"
 )

@@ -1,2 +1,2 @@
-supervisorctl restart goapi2_api
+supervisorctl restart gorank_api
 echo "restart ok"

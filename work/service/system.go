@@ -6,8 +6,8 @@ import (
 
 	"github.com/jinzhu/now"
 
-	kinit "goapi2/initialize"
-	kcode "goapi2/work/code"
+	kinit "gorank/initialize"
+	kcode "gorank/work/code"
 )
 
 const SETTLE_TIME_SECOND = 1

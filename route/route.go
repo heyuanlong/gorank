@@ -3,8 +3,8 @@ package route
 import (
 	"fmt"
 
-	kinit "goapi2/initialize"
-	kbase "goapi2/work/control/base"
+	kinit "gorank/initialize"
+	kbase "gorank/work/control/base"
 
 	"github.com/gin-gonic/gin"
 )

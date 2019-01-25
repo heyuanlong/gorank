@@ -1,2 +1,2 @@
-supervisorctl start goapi2_api
+supervisorctl start gorank_api
 echo "start ok"

@@ -2,5 +2,5 @@ go build
 echo "go build ok"
 
 
-#cp -f goapi2 /data/bin/goapi2_api
+#cp -f gorank /data/bin/gorank_api
 #echo "cp ok"

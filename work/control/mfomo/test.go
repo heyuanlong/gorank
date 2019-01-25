@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"strconv"
 
-	kinit "goapi2/initialize"
-	kcode "goapi2/work/code"
-	kbase "goapi2/work/control/base"
+	kinit "gorank/initialize"
+	kcode "gorank/work/code"
+	kbase "gorank/work/control/base"
 
 	"github.com/gin-gonic/gin"
 )

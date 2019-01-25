@@ -2,13 +2,13 @@ package main
 
 import (
 	"flag"
-	_ "goapi2/initialize"
-	kmfomo "goapi2/work/control/mfomo"
+	_ "gorank/initialize"
+	kmfomo "gorank/work/control/mfomo"
 	"strconv"
 	//klog "github.com/heyuanlong/go-utils/common/log"
-	kinit "goapi2/initialize"
-	kroute "goapi2/route"
-	kservice "goapi2/work/service"
+	kinit "gorank/initialize"
+	kroute "gorank/route"
+	kservice "gorank/work/service"
 )
 
 func main() {

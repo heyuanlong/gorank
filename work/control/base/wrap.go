@@ -1,7 +1,7 @@
 package base
 
 import (
-	kinit "goapi2/initialize"
+	kinit "gorank/initialize"
 
 	"github.com/gin-gonic/gin"
 )
