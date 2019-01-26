@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 	"sort"
 )
@@ -37,34 +38,41 @@ type BucketStruct struct {
 
 func NewBucketStruct() *BucketStruct {
 	return &BucketStruct{
-		maxs:  200,
-		caps:  300,
-		datas: make(datasStruct, 500),
+		maxs:  20,
+		caps:  30,
+		datas: make(datasStruct, 31),
 	}
 }
-
-func (ts *BucketStruct) CanAdd(bdata basedataInterface) int { //-1:前面 0:中间 1:后面
+func (ts *BucketStruct) GetNums() int {
+	return ts.nums
+}
+func (ts *BucketStruct) CanAdd(bdata basedataInterface, isFind bool) int { //-1:前面 0:中间 1:后面
 
 	if ts.nums == 0 {
-		fmt.Print(MID_POS, " ")
-		return MID_POS
+		if isFind == false {
+			fmt.Print(MID_POS, "pm    ")
+			return MID_POS
+		}
+		fmt.Print(NEXT_POS, "pm    ")
+		return NEXT_POS
 	}
-	fmt.Print(ts.headData.GetValue(), " ", ts.tailData.GetValue(), " ")
-	if bdata.Compare(ts.headData) == false {
-		fmt.Print(PRE_POS, " ")
+
+	fmt.Print(ts.headData.GetValue(), "h ", ts.tailData.GetValue(), "v ")
+	if bdata.Comparep(ts.headData) == true {
+		fmt.Print(PRE_POS, "p    ")
 		return PRE_POS
 	}
-	if bdata.Compare(ts.tailData) == false {
-		fmt.Print(MID_POS, " ")
+	if bdata.Compare(ts.tailData) == true {
+		fmt.Print(MID_POS, "p    ")
 		return MID_POS
 	}
-	fmt.Print(NEXT_POS, " ")
+	fmt.Print(NEXT_POS, "p    ")
 	return NEXT_POS
 }
 
 func (ts *BucketStruct) Add(bdata basedataInterface) {
 
-	pos := sort.Search(ts.nums, func(i int) bool { return ts.datas[i].Compare(bdata) })
+	pos := sort.Search(ts.nums, func(i int) bool { return bdata.Compare(ts.datas[i]) })
 	fmt.Println("pos:", pos, "value:", bdata.GetValue())
 	for index := ts.nums; index >= pos; index-- {
 		ts.datas[index+1] = ts.datas[index]
@@ -76,6 +84,31 @@ func (ts *BucketStruct) Add(bdata basedataInterface) {
 	ts.tailData = ts.datas[ts.nums-1]
 
 	ts.check()
+}
+func (ts *BucketStruct) Find(bdata basedataInterface) (int, error) {
+	pos := sort.Search(ts.nums, func(i int) bool { return bdata.Compare(ts.datas[i]) })
+	for i := pos; i < ts.nums; i++ {
+		fmt.Println("GetKey:", ts.datas[i].GetKey(), "GetValue:", ts.datas[i].GetValue())
+		if ts.datas[i].GetKey() == bdata.GetKey() {
+			return i, nil
+		}
+	}
+	return 0, errors.New("not find")
+}
+func (ts *BucketStruct) Del(bdata basedataInterface) error {
+	pos := sort.Search(ts.nums, func(i int) bool { return bdata.Compare(ts.datas[i]) })
+	for i := pos; i < ts.nums; i++ {
+		//fmt.Println("GetKey:", ts.datas[i].GetKey(), "GetValue:", ts.datas[i].GetValue())
+		if ts.datas[i].GetKey() == bdata.GetKey() {
+			for j := i; j < ts.nums-1; j++ {
+				ts.datas[j] = ts.datas[j+1]
+			}
+			ts.nums -= 1
+			ts.tailData = ts.datas[ts.nums-1]
+			return nil
+		}
+	}
+	return errors.New("not find")
 }
 
 func (ts *BucketStruct) check() {

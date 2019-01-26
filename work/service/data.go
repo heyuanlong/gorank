@@ -17,8 +17,11 @@ func NewDataStruct(userId int, value int) *dataStruct {
 func (ts *dataStruct) GetKey() int {
 	return ts.userId
 }
+func (ts *dataStruct) Comparep(b basedataInterface) bool {
+	return ts.GetValue() < b.GetValue() //一定得>= 或者 <= ，否则Find将失败
+}
 func (ts *dataStruct) Compare(b basedataInterface) bool {
-	return ts.GetValue() < b.GetValue()
+	return ts.GetValue() <= b.GetValue() //一定得>= 或者 <= ，否则Find将失败
 }
 func (ts *dataStruct) GetValue() int {
 	return ts.value
