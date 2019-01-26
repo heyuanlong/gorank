@@ -35,17 +35,20 @@ func (ts *SettleStruct) Run(nums int) {
 	fmt.Println()
 	fmt.Println()
 
-	fmt.Println(rank.GetRank(NewDataStruct(60, 0)))
+	fmt.Println(rank.Update(NewDataStruct(60, 59)))
 
-	for index := 0; index < nums; index++ {
-		//d := NewDataStruct(index, rand.Intn(999))
-		d := NewDataStruct(index, index)
-		rank.Del(d)
-
-	}
-	fmt.Println()
 	rank.LookAll()
 	fmt.Println()
+
+	objs := rank.GetPage(1, 15)
+	for _, v := range objs {
+		fmt.Print(v.GetValue(), ",")
+	}
+	fmt.Println()
+	objs2 := rank.GetPage(2, 15)
+	for _, v := range objs2 {
+		fmt.Print(v.GetValue(), ",")
+	}
 	fmt.Println()
 	fmt.Println()
 }

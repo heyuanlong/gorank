@@ -95,6 +95,18 @@ func (ts *BucketStruct) Find(bdata basedataInterface) (int, error) {
 	}
 	return 0, errors.New("not find")
 }
+func (ts *BucketStruct) UpdateInThisBucket(pos int, newd basedataInterface) error {
+	if newd.Comparep(ts.headData) == false && newd.Compare(ts.tailData) == true { //说明新的值也是落在这个bucket里
+		ts.datas[pos] = newd
+		sort.Sort(ts.datas[:ts.nums])
+		ts.headData = ts.datas[0]
+		ts.tailData = ts.datas[ts.nums-1]
+		return nil
+	}
+
+	return errors.New("new data not in this bucket")
+}
+
 func (ts *BucketStruct) Del(bdata basedataInterface) error {
 	pos := sort.Search(ts.nums, func(i int) bool { return bdata.Compare(ts.datas[i]) })
 	for i := pos; i < ts.nums; i++ {
@@ -172,6 +184,9 @@ func (ts *BucketStruct) loadNext() {
 	new.next = nil
 	new.prev = ts
 	ts.next = new
+}
+func (ts *BucketStruct) Datas() (int, datasStruct) {
+	return ts.nums, ts.datas[:ts.nums]
 }
 
 func (ts *BucketStruct) Print() {

@@ -23,11 +23,13 @@ func NewRankStruct() *RankStruct {
 
 	return r
 }
-
 func (ts *RankStruct) Add(bdata basedataInterface) error {
-	if _, ok := ts.datam[bdata.GetKey()]; ok {
+	return ts.Update(bdata)
+}
+func (ts *RankStruct) Update(bdata basedataInterface) error {
+	if old, ok := ts.datam[bdata.GetKey()]; ok {
 		//更新
-		return ts.update(bdata)
+		return ts.update(old, bdata)
 	}
 
 	//添加
@@ -110,8 +112,43 @@ func (ts *RankStruct) GetRank(d basedataInterface) (int, error) {
 	return 0, errors.New("not this key!")
 }
 func (ts *RankStruct) GetPage(page int, paseSize int) []basedataInterface {
+	obj := make([]basedataInterface, 0, paseSize)
+	if page < 1 {
+		page = 1
+	}
+	if paseSize < 5 {
+		paseSize = 5
+	}
 
-	return []basedataInterface{}
+	bucket := ts.bucket
+	startNums := (page - 1) * paseSize
+	endNums := startNums + paseSize
+	orders := 0
+	for {
+
+		n, datas := bucket.Datas()
+		if (orders + n) >= startNums {
+			for i := 0; i < n; i++ {
+				if orders >= startNums {
+					obj = append(obj, datas[i])
+					//fmt.Print("add-", orders, endNums)
+				}
+
+				orders += 1
+				if orders == endNums {
+					return obj
+				}
+			}
+		} else {
+			orders += n
+		}
+
+		bucket = bucket.next
+		if bucket == nil {
+			break
+		}
+	}
+	return obj
 }
 
 func (ts *RankStruct) LookAll() {
@@ -157,6 +194,42 @@ func (ts *RankStruct) add(bdata basedataInterface) error {
 
 	return nil
 }
-func (ts *RankStruct) update(bdata basedataInterface) error {
-	return nil
+func (ts *RankStruct) update(old, newd basedataInterface) error {
+	if old.Equal(newd) == true {
+		return nil
+	}
+
+	bucket := ts.bucket
+	var startBucket *BucketStruct = nil //从这个bucket开始查找
+	for {
+		pos := bucket.CanAdd(old, true)
+		if pos == MID_POS { //一定在某个bucket范围内
+			startBucket = bucket
+			break
+		}
+		bucket = bucket.next
+		if bucket == nil {
+			break
+		}
+	}
+
+	for {
+		if startBucket == nil {
+			break
+		}
+		pos, err := startBucket.Find(old) //找到确定的bucket
+		if err == nil {
+			err := startBucket.UpdateInThisBucket(pos, newd) //新的值是否也是落在这个bucket里
+			if err != nil {
+				startBucket.Del(old) //删除，这个是代码确定成功
+				return ts.add(newd)
+
+			}
+			return nil
+		}
+		startBucket = startBucket.next
+	}
+
+	return errors.New("not find old key!")
+
 }
