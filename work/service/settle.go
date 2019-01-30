@@ -3,6 +3,8 @@ package service
 import (
 	"fmt"
 	krank "gorank/work/rank"
+	"math/rand"
+	"time"
 )
 
 type SettleStruct struct {
@@ -50,6 +52,49 @@ func (ts *SettleStruct) Run(nums int) {
 	for _, v := range objs2 {
 		fmt.Print(v.GetValue(), ",")
 	}
+	fmt.Println()
+	fmt.Println()
+}
+func (ts *SettleStruct) Run2(nums int) {
+	start := time.Now()
+	rank := krank.NewRankStruct()
+	for index := 0; index < 20*10000; index++ {
+		d := krank.NewDataStruct(index, rand.Intn(9999*10000))
+		rank.Add(d)
+	}
+	fmt.Println("add cost=", time.Since(start))
+	fmt.Println()
+
+	start = time.Now()
+	d := krank.NewDataStruct(8784, 0)
+	fmt.Println(rank.GetRank(d))
+	fmt.Println("get rank cost=", time.Since(start))
+	fmt.Println()
+
+	start = time.Now()
+	d = krank.NewDataStruct(8784, 788999)
+	fmt.Println(rank.Update(d))
+	fmt.Println("update cost=", time.Since(start))
+	fmt.Println()
+
+	start = time.Now()
+	d = krank.NewDataStruct(8784, 0)
+	fmt.Println(rank.GetRank(d))
+	fmt.Println("get rank cost=", time.Since(start))
+	fmt.Println()
+
+	start = time.Now()
+	d = krank.NewDataStruct(8784, 0)
+	fmt.Println(rank.Del(d))
+	fmt.Println("get Del cost=", time.Since(start))
+	fmt.Println()
+
+	start = time.Now()
+	objs2 := rank.GetPage(2000, 15)
+	for _, v := range objs2 {
+		fmt.Print(v.GetValue(), ",")
+	}
+	fmt.Println("page cost=", time.Since(start))
 	fmt.Println()
 	fmt.Println()
 }

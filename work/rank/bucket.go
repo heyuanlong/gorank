@@ -2,7 +2,6 @@ package rank
 
 import (
 	"errors"
-	"fmt"
 	"sort"
 )
 
@@ -37,9 +36,9 @@ type BucketStruct struct {
 
 func NewBucketStruct() *BucketStruct {
 	return &BucketStruct{
-		goodNums: 20,
-		maxs:     30,
-		datas:    make(datasStruct, 31),
+		goodNums: 400,
+		maxs:     500,
+		datas:    make(datasStruct, 501),
 	}
 }
 func (ts *BucketStruct) GetNums() int {
@@ -49,30 +48,30 @@ func (ts *BucketStruct) CanAdd(bdata basedataInterface, isFind bool) int { //-1:
 
 	if ts.nums == 0 {
 		if isFind == false {
-			fmt.Print(MID_POS, "pm    ")
+			//fmt.Print(MID_POS, "pm    ")
 			return MID_POS
 		}
-		fmt.Print(NEXT_POS, "pm    ")
+		//fmt.Print(NEXT_POS, "pm    ")
 		return NEXT_POS
 	}
 
-	fmt.Print(ts.headData.GetValue(), "h ", ts.tailData.GetValue(), "v ")
+	//fmt.Print(ts.headData.GetValue(), "h ", ts.tailData.GetValue(), "v ")
 	if bdata.Comparep(ts.headData) == true {
-		fmt.Print(PRE_POS, "p    ")
+		//fmt.Print(PRE_POS, "p    ")
 		return PRE_POS
 	}
 	if bdata.Compare(ts.tailData) == true {
-		fmt.Print(MID_POS, "p    ")
+		//fmt.Print(MID_POS, "p    ")
 		return MID_POS
 	}
-	fmt.Print(NEXT_POS, "p    ")
+	//fmt.Print(NEXT_POS, "p    ")
 	return NEXT_POS
 }
 
 func (ts *BucketStruct) Add(bdata basedataInterface) {
 
 	pos := sort.Search(ts.nums, func(i int) bool { return bdata.Compare(ts.datas[i]) })
-	fmt.Println("pos:", pos, "value:", bdata.GetValue())
+	//fmt.Println("pos:", pos, "value:", bdata.GetValue())
 	for index := ts.nums; index >= pos; index-- {
 		ts.datas[index+1] = ts.datas[index] //数据向后移动
 	}
@@ -87,7 +86,7 @@ func (ts *BucketStruct) Add(bdata basedataInterface) {
 func (ts *BucketStruct) Find(bdata basedataInterface) (int, error) {
 	pos := sort.Search(ts.nums, func(i int) bool { return bdata.Compare(ts.datas[i]) })
 	for i := pos; i < ts.nums; i++ {
-		fmt.Println("GetKey:", ts.datas[i].GetKey(), "GetValue:", ts.datas[i].GetValue())
+		//fmt.Println("GetKey:", ts.datas[i].GetKey(), "GetValue:", ts.datas[i].GetValue())
 		if ts.datas[i].GetKey() == bdata.GetKey() {
 			return i, nil
 		}
@@ -109,7 +108,7 @@ func (ts *BucketStruct) UpdateInThisBucket(pos int, newd basedataInterface) erro
 func (ts *BucketStruct) Del(bdata basedataInterface) error {
 	pos := sort.Search(ts.nums, func(i int) bool { return bdata.Compare(ts.datas[i]) })
 	for i := pos; i < ts.nums; i++ {
-		//fmt.Println("GetKey:", ts.datas[i].GetKey(), "GetValue:", ts.datas[i].GetValue())
+		////fmt.Println("GetKey:", ts.datas[i].GetKey(), "GetValue:", ts.datas[i].GetValue())
 		if ts.datas[i].GetKey() == bdata.GetKey() {
 			for j := i; j < ts.nums-1; j++ {
 				ts.datas[j] = ts.datas[j+1] //数据向前移动
@@ -126,7 +125,7 @@ func (ts *BucketStruct) check() {
 	if ts.nums < ts.maxs { //未到达最大数据
 		return
 	}
-	fmt.Println("go li---")
+	//fmt.Println("go li---")
 
 	pnums := 0
 	if ts.prev != nil {

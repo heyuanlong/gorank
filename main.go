@@ -5,6 +5,7 @@ import (
 	_ "gorank/initialize"
 	kmfomo "gorank/work/control/mfomo"
 	"strconv"
+
 	//klog "github.com/heyuanlong/go-utils/common/log"
 	kinit "gorank/initialize"
 	kroute "gorank/route"
@@ -31,5 +32,7 @@ func main() {
 	if *types == "settle" {
 		kservice.BusiSettle.Run(int(*begins))
 	}
-
+	if *types == "settle2" {
+		kservice.BusiSettle.Run2(int(*begins))
+	}
 }

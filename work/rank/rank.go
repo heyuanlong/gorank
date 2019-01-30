@@ -2,7 +2,6 @@ package rank
 
 import (
 	"errors"
-	"fmt"
 	"sync"
 )
 
@@ -41,7 +40,7 @@ func (ts *RankStruct) Del(d basedataInterface) error {
 	if ok == false {
 		return errors.New("not this key")
 	}
-	fmt.Println(bdata.GetValue())
+	//fmt.Println(bdata.GetValue())
 
 	bucket := ts.bucket
 	var startBucket *BucketStruct = nil //从这个bucket开始查找
@@ -77,7 +76,7 @@ func (ts *RankStruct) GetRank(d basedataInterface) (int, error) {
 	if ok == false {
 		return 0, errors.New("not this key")
 	}
-	fmt.Println(bdata.GetValue())
+	//fmt.Println(bdata.GetValue())
 
 	bucket := ts.bucket
 	var startBucket *BucketStruct = nil //从这个bucket开始查找
@@ -156,7 +155,7 @@ func (ts *RankStruct) LookAll() {
 	for {
 
 		bucket.Print()
-		fmt.Print(" -> ")
+		//fmt.Print(" -> ")
 		bucket = bucket.next
 
 		if bucket == nil {
