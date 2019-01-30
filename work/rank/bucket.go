@@ -1,4 +1,4 @@
-package service
+package rank
 
 import (
 	"errors"
@@ -25,22 +25,21 @@ func (s datasStruct) Swap(i, j int) {
 }
 
 type BucketStruct struct {
-	prev  *BucketStruct
-	next  *BucketStruct
-	nums  int         //当前数量
-	maxs  int         //合理最大数量
-	caps  int         //最大容量
-	datas datasStruct //数据
-
-	headData basedataInterface
-	tailData basedataInterface
+	prev     *BucketStruct
+	next     *BucketStruct
+	nums     int               //当前数量
+	goodNums int               //合理最大数量
+	maxs     int               //最大容量
+	datas    datasStruct       //数据
+	headData basedataInterface //头部数据
+	tailData basedataInterface //尾部数据
 }
 
 func NewBucketStruct() *BucketStruct {
 	return &BucketStruct{
-		maxs:  20,
-		caps:  30,
-		datas: make(datasStruct, 31),
+		goodNums: 20,
+		maxs:     30,
+		datas:    make(datasStruct, 31),
 	}
 }
 func (ts *BucketStruct) GetNums() int {
@@ -75,7 +74,7 @@ func (ts *BucketStruct) Add(bdata basedataInterface) {
 	pos := sort.Search(ts.nums, func(i int) bool { return bdata.Compare(ts.datas[i]) })
 	fmt.Println("pos:", pos, "value:", bdata.GetValue())
 	for index := ts.nums; index >= pos; index-- {
-		ts.datas[index+1] = ts.datas[index]
+		ts.datas[index+1] = ts.datas[index] //数据向后移动
 	}
 	ts.datas[pos] = bdata
 
@@ -113,7 +112,7 @@ func (ts *BucketStruct) Del(bdata basedataInterface) error {
 		//fmt.Println("GetKey:", ts.datas[i].GetKey(), "GetValue:", ts.datas[i].GetValue())
 		if ts.datas[i].GetKey() == bdata.GetKey() {
 			for j := i; j < ts.nums-1; j++ {
-				ts.datas[j] = ts.datas[j+1]
+				ts.datas[j] = ts.datas[j+1] //数据向前移动
 			}
 			ts.nums -= 1
 			ts.tailData = ts.datas[ts.nums-1]
@@ -124,30 +123,28 @@ func (ts *BucketStruct) Del(bdata basedataInterface) error {
 }
 
 func (ts *BucketStruct) check() {
-	if ts.nums < ts.caps {
+	if ts.nums < ts.maxs { //未到达最大数据
 		return
 	}
 	fmt.Println("go li---")
 
 	pnums := 0
 	if ts.prev != nil {
-		if ts.prev.nums < ts.prev.maxs { //分给前面的bucket
-			pnums = ts.prev.maxs - ts.prev.nums
+		if ts.prev.nums < ts.prev.goodNums { //分给前面的bucket
+			pnums = ts.prev.goodNums - ts.prev.nums
 			ts.prev.addTails(ts.datas[0:pnums])
 		}
 	}
-	//nnums := 0
-	if (ts.nums - pnums) > ts.maxs { //强制分给后面的bucket
-		//nnums = (ts.nums - pnums) - ts.maxs
+	if (ts.nums - pnums) > ts.goodNums { //强制分给后面的bucket
 		ts.loadNext()
-		ts.next.addHeads(ts.datas[ts.maxs+pnums : ts.nums])
+		ts.next.addHeads(ts.datas[ts.goodNums+pnums : ts.nums])
 	}
 
-	for index := 0; index < ts.maxs; index++ {
-		ts.datas[index] = ts.datas[index+pnums]
+	for index := 0; index < ts.goodNums; index++ {
+		ts.datas[index] = ts.datas[index+pnums] //从pnums位置的数据移动前面
 	}
 
-	ts.nums = ts.maxs
+	ts.nums = ts.goodNums
 	ts.headData = ts.datas[0]
 	ts.tailData = ts.datas[ts.nums-1]
 }
@@ -165,7 +162,7 @@ func (ts *BucketStruct) addTails(bdatas []basedataInterface) {
 }
 func (ts *BucketStruct) addHeads(bdatas []basedataInterface) {
 	tmp := make([]basedataInterface, len(bdatas)) //有待优化
-	copy(tmp, bdatas)
+	copy(tmp, bdatas)                             //刚开始没有用copy，坑了自己一把
 	ts.datas = append(tmp, ts.datas...)
 
 	ts.nums += len(bdatas)

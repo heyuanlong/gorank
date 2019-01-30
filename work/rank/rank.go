@@ -1,4 +1,4 @@
-package service
+package rank
 
 import (
 	"errors"
@@ -9,8 +9,8 @@ import (
 type RankStruct struct {
 	tm     int64
 	rwLock sync.RWMutex
-	bucket *BucketStruct
-	datam  map[int]basedataInterface
+	bucket *BucketStruct             //桶链表
+	datam  map[int]basedataInterface //数据map
 }
 
 func NewRankStruct() *RankStruct {
@@ -58,7 +58,7 @@ func (ts *RankStruct) Del(d basedataInterface) error {
 		}
 	}
 
-	for {
+	for { //因为连续的bucket里面的数据可能是一样的，所以要继续循环查找
 		if startBucket == nil {
 			break
 		}
@@ -96,7 +96,7 @@ func (ts *RankStruct) GetRank(d basedataInterface) (int, error) {
 		}
 	}
 
-	for {
+	for { //因为连续的bucket里面的数据可能是一样的，所以要继续循环查找
 		if startBucket == nil {
 			break
 		}
@@ -127,11 +127,10 @@ func (ts *RankStruct) GetPage(page int, paseSize int) []basedataInterface {
 	for {
 
 		n, datas := bucket.Datas()
-		if (orders + n) >= startNums {
+		if (orders + n) >= startNums { //这个bucket的尾部大于startNums的位置
 			for i := 0; i < n; i++ {
 				if orders >= startNums {
 					obj = append(obj, datas[i])
-					//fmt.Print("add-", orders, endNums)
 				}
 
 				orders += 1
@@ -176,11 +175,11 @@ func (ts *RankStruct) add(bdata basedataInterface) error {
 
 		pos := bucket.CanAdd(bdata, false)
 		if pos == PRE_POS {
-			preBucket.Add(bdata)
+			preBucket.Add(bdata) //落在这个bucket之前
 			break
 		}
 		if pos == MID_POS {
-			bucket.Add(bdata)
+			bucket.Add(bdata) //落在这个bucket之内
 			break
 		}
 		preBucket = bucket
@@ -220,10 +219,9 @@ func (ts *RankStruct) update(old, newd basedataInterface) error {
 		pos, err := startBucket.Find(old) //找到确定的bucket
 		if err == nil {
 			err := startBucket.UpdateInThisBucket(pos, newd) //新的值是否也是落在这个bucket里
-			if err != nil {
+			if err != nil {                                  //新的值没有落在原来的bucket里
 				startBucket.Del(old) //删除，这个是代码确定成功
 				return ts.add(newd)
-
 			}
 			return nil
 		}
@@ -231,5 +229,4 @@ func (ts *RankStruct) update(old, newd basedataInterface) error {
 	}
 
 	return errors.New("not find old key!")
-
 }

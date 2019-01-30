@@ -1,4 +1,4 @@
-package service
+package rank
 
 type basedataInterface interface {
 	GetKey() int
