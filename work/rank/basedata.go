@@ -7,4 +7,5 @@ type basedataInterface interface {
 	Equal(basedataInterface) bool
 	Print()
 	GetValue() int
+	SetValue(int) 
 }

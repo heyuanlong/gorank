@@ -221,6 +221,8 @@ func (ts *RankStruct) update(old, newd basedataInterface) error {
 			if err != nil {                                  //新的值没有落在原来的bucket里
 				startBucket.Del(old) //删除，这个是代码确定成功
 				return ts.add(newd)
+			} else {
+				ts.datam[old.GetKey()].SetValue(newd.GetValue())
 			}
 			return nil
 		}

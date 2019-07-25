@@ -30,6 +30,10 @@ func (ts *dataStruct) Equal(b basedataInterface) bool {
 func (ts *dataStruct) GetValue() int {
 	return ts.value
 }
+func (ts *dataStruct) SetValue(v int) {
+	ts.value = v
+}
+ 
 func (ts *dataStruct) Print() {
-	fmt.Print(ts.value, ",")
+	fmt.Println(ts.userId, ":", ts.value)
 }
