@@ -11,7 +11,7 @@ const (
 	NEXT_POS = 1
 )
 
-type datasStruct []basedataInterface
+type datasStruct []BasedataInterface
 
 func (s datasStruct) Len() int {
 	return len(s)
@@ -30,8 +30,8 @@ type BucketStruct struct {
 	goodNums int               //合理最大数量
 	maxs     int               //最大容量
 	datas    datasStruct       //数据
-	headData basedataInterface //头部数据
-	tailData basedataInterface //尾部数据
+	headData BasedataInterface //头部数据
+	tailData BasedataInterface //尾部数据
 }
 
 func NewBucketStruct() *BucketStruct {
@@ -44,7 +44,7 @@ func NewBucketStruct() *BucketStruct {
 func (ts *BucketStruct) GetNums() int {
 	return ts.nums
 }
-func (ts *BucketStruct) CanAdd(bdata basedataInterface, isFind bool) int { //-1:前面 0:中间 1:后面
+func (ts *BucketStruct) CanAdd(bdata BasedataInterface, isFind bool) int { //-1:前面 0:中间 1:后面
 
 	if ts.nums == 0 {
 		if isFind == false {
@@ -68,7 +68,7 @@ func (ts *BucketStruct) CanAdd(bdata basedataInterface, isFind bool) int { //-1:
 	return NEXT_POS
 }
 
-func (ts *BucketStruct) Add(bdata basedataInterface) {
+func (ts *BucketStruct) Add(bdata BasedataInterface) {
 
 	pos := sort.Search(ts.nums, func(i int) bool { return bdata.Compare(ts.datas[i]) })
 	//fmt.Println("pos:", pos, "value:", bdata.GetValue())
@@ -83,7 +83,7 @@ func (ts *BucketStruct) Add(bdata basedataInterface) {
 
 	ts.check()
 }
-func (ts *BucketStruct) Find(bdata basedataInterface) (int, error) {
+func (ts *BucketStruct) Find(bdata BasedataInterface) (int, error) {
 	pos := sort.Search(ts.nums, func(i int) bool { return bdata.Compare(ts.datas[i]) })
 	for i := pos; i < ts.nums; i++ {
 		//fmt.Println("GetKey:", ts.datas[i].GetKey(), "GetValue:", ts.datas[i].GetValue())
@@ -93,7 +93,7 @@ func (ts *BucketStruct) Find(bdata basedataInterface) (int, error) {
 	}
 	return 0, errors.New("not find")
 }
-func (ts *BucketStruct) UpdateInThisBucket(pos int, newd basedataInterface) error {
+func (ts *BucketStruct) UpdateInThisBucket(pos int, newd BasedataInterface) error {
 	if newd.Comparep(ts.headData) == false && newd.Compare(ts.tailData) == true { //说明新的值也是落在这个bucket里
 		ts.datas[pos] = newd
 		sort.Sort(ts.datas[:ts.nums])
@@ -105,7 +105,7 @@ func (ts *BucketStruct) UpdateInThisBucket(pos int, newd basedataInterface) erro
 	return errors.New("new data not in this bucket")
 }
 
-func (ts *BucketStruct) Del(bdata basedataInterface) error {
+func (ts *BucketStruct) Del(bdata BasedataInterface) error {
 	pos := sort.Search(ts.nums, func(i int) bool { return bdata.Compare(ts.datas[i]) })
 	for i := pos; i < ts.nums; i++ {
 		////fmt.Println("GetKey:", ts.datas[i].GetKey(), "GetValue:", ts.datas[i].GetValue())
@@ -148,7 +148,7 @@ func (ts *BucketStruct) check() {
 	ts.tailData = ts.datas[ts.nums-1]
 }
 
-func (ts *BucketStruct) addTails(bdatas []basedataInterface) {
+func (ts *BucketStruct) addTails(bdatas []BasedataInterface) {
 	length := len(bdatas)
 	i := 0
 
@@ -159,8 +159,8 @@ func (ts *BucketStruct) addTails(bdatas []basedataInterface) {
 	ts.nums += length
 	ts.tailData = ts.datas[ts.nums-1]
 }
-func (ts *BucketStruct) addHeads(bdatas []basedataInterface) {
-	tmp := make([]basedataInterface, len(bdatas)) //有待优化
+func (ts *BucketStruct) addHeads(bdatas []BasedataInterface) {
+	tmp := make([]BasedataInterface, len(bdatas)) //有待优化
 	copy(tmp, bdatas)                             //刚开始没有用copy，坑了自己一把
 	ts.datas = append(tmp, ts.datas...)
 
@@ -185,8 +185,8 @@ func (ts *BucketStruct) Datas() (int, datasStruct) {
 	return ts.nums, ts.datas[:ts.nums]
 }
 
-func (ts *BucketStruct) Print() {
+func (ts *BucketStruct) Write() {
 	for index := 0; index < ts.nums; index++ {
-		ts.datas[index].Print()
+		ts.datas[index].Write()
 	}
 }

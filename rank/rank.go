@@ -9,12 +9,12 @@ type RankStruct struct {
 	tm     int64
 	rwLock sync.RWMutex
 	bucket *BucketStruct             //桶链表
-	datam  map[int]basedataInterface //数据map
+	datam  map[int]BasedataInterface //数据map
 }
 
 func NewRankStruct() *RankStruct {
 	r := &RankStruct{
-		datam:  make(map[int]basedataInterface),
+		datam:  make(map[int]BasedataInterface),
 		bucket: NewBucketStruct(),
 	}
 	r.bucket.prev = nil
@@ -22,10 +22,14 @@ func NewRankStruct() *RankStruct {
 
 	return r
 }
-func (ts *RankStruct) Add(bdata basedataInterface) error {
+
+//添加元素
+func (ts *RankStruct) Add(bdata BasedataInterface) error {
 	return ts.Update(bdata)
 }
-func (ts *RankStruct) Update(bdata basedataInterface) error {
+
+//更新元素
+func (ts *RankStruct) Update(bdata BasedataInterface) error {
 	if old, ok := ts.datam[bdata.GetKey()]; ok {
 		//更新
 		return ts.update(old, bdata)
@@ -35,7 +39,8 @@ func (ts *RankStruct) Update(bdata basedataInterface) error {
 	return ts.add(bdata)
 }
 
-func (ts *RankStruct) Del(d basedataInterface) error {
+//删除元素
+func (ts *RankStruct) Del(d BasedataInterface) error {
 	bdata, ok := ts.datam[d.GetKey()]
 	if ok == false {
 		return errors.New("not this key")
@@ -71,7 +76,9 @@ func (ts *RankStruct) Del(d basedataInterface) error {
 	return errors.New("not this key!")
 
 }
-func (ts *RankStruct) GetRank(d basedataInterface) (int, error) {
+
+//获得元素排名
+func (ts *RankStruct) GetRank(d BasedataInterface) (int, error) {
 	bdata, ok := ts.datam[d.GetKey()]
 	if ok == false {
 		return 0, errors.New("not this key")
@@ -110,8 +117,10 @@ func (ts *RankStruct) GetRank(d basedataInterface) (int, error) {
 
 	return 0, errors.New("not this key!")
 }
-func (ts *RankStruct) GetPage(page int, paseSize int) []basedataInterface {
-	obj := make([]basedataInterface, 0, paseSize)
+
+//获得某段排名列表
+func (ts *RankStruct) GetPage(page int, paseSize int) []BasedataInterface {
+	obj := make([]BasedataInterface, 0, paseSize)
 	if page < 1 {
 		page = 1
 	}
@@ -149,13 +158,13 @@ func (ts *RankStruct) GetPage(page int, paseSize int) []basedataInterface {
 	return obj
 }
 
+//打印列表
 func (ts *RankStruct) LookAll() {
 
 	bucket := ts.bucket
 	for {
 
-		bucket.Print()
-		//fmt.Print(" -> ")
+		bucket.Write()
 		bucket = bucket.next
 
 		if bucket == nil {
@@ -165,7 +174,7 @@ func (ts *RankStruct) LookAll() {
 }
 
 //-------------------------------------------------------------------------------
-func (ts *RankStruct) add(bdata basedataInterface) error {
+func (ts *RankStruct) add(bdata BasedataInterface) error {
 	ts.datam[bdata.GetKey()] = bdata
 
 	preBucket := ts.bucket
@@ -192,7 +201,7 @@ func (ts *RankStruct) add(bdata basedataInterface) error {
 
 	return nil
 }
-func (ts *RankStruct) update(old, newd basedataInterface) error {
+func (ts *RankStruct) update(old, newd BasedataInterface) error {
 	if old.Equal(newd) == true {
 		return nil
 	}
@@ -222,7 +231,7 @@ func (ts *RankStruct) update(old, newd basedataInterface) error {
 				startBucket.Del(old) //删除，这个是代码确定成功
 				return ts.add(newd)
 			} else {
-				ts.datam[old.GetKey()].SetValue(newd.GetValue())
+				ts.datam[old.GetKey()].SetValue(newd)
 			}
 			return nil
 		}
